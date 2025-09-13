@@ -820,6 +820,3 @@ bitbake demo-image-base
 * **BSPs** → Board-specific support layers (Raspberry Pi, Jetson, BeagleBone).
 
 ```
-
-Do you also want me to prepare a **Markdown cheatsheet** with `bitbake` one-liners (like `clean`, `rebuild`, `find recipe`, `add layer`) so you can keep it for quick reference in interviews?
-```
