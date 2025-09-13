@@ -17,3 +17,8 @@ remote: Total 702792 (delta 4710), reused 4860 (delta 4283), pack-reused 697037 
 Receiving objects: 100% (702792/702792), 220.50 MiB | 3.09 MiB/s, done.
 Resolving deltas: 100% (510727/510727), done.
 ```
+### Commands:-
+```
+cd poky/
+ls
+```
