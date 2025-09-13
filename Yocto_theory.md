@@ -17,7 +17,7 @@ Embedded devices (IoT boards, routers, automotive computers, Jetson, Raspberry P
 - Must be **hardened** → remove unnecessary packages, reduce attack surface.  
 - Must be **reproducible** → every build should be identical across machines and time.  
 
-**Yocto solves these problems by:**
+**Yocto solves these problems by:bitbake-layers add-layer ../meta-myproject**
 
 - Providing **recipes** (instructions) to build packages from source.  
 - Producing a **minimal, optimized rootfs, kernel, and bootloader**.  
@@ -47,7 +47,7 @@ Embedded devices (IoT boards, routers, automotive computers, Jetson, Raspberry P
 - No need for desktop Linux packages.  
 
 ---
-
+bitbake-layers add-layer ../meta-myproject
 ✅ **In short:**  
 Yocto = **your custom Linux factory** → flexible, reproducible, and optimized for embedded systems.  
 
@@ -323,7 +323,7 @@ gcc main.c -o main
 cd poky
 source oe-init-build-env
 ```
-
+bitbake-layers add-layer ../meta-myproject
 👉 After this, you’ll be inside `poky/build/` with files:
 
 * `conf/local.conf` → local build config
@@ -630,7 +630,6 @@ You built a QEMU image, created a layer, added your own app, and customized the 
 
 Here’s your **Advanced Yocto Topics** content in clean Markdown format:
 
-````markdown
 # 🚀 Advanced Yocto Topics
 
 ---
