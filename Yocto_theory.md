@@ -819,4 +819,104 @@ bitbake demo-image-base
 * **sstate Cache & DL\_DIR** → Speed up builds with caching.
 * **BSPs** → Board-specific support layers (Raspberry Pi, Jetson, BeagleBone).
 
+
+# 📌 Yocto / BitBake Cheatsheet
+
+---
+
+## 🔹 Build Basics
+```bash
+bitbake core-image-minimal       # Build a minimal rootfs image
+bitbake core-image-sato          # Build a GUI-enabled image
+bitbake <recipe>                 # Build a single recipe (e.g., busybox)
+````
+
+---
+
+## 🔹 Cleaning & Rebuilding
+
+```bash
+bitbake -c clean <recipe>        # Remove build artifacts (keeps downloads)
+bitbake -c cleansstate <recipe>  # Remove build + cache (forces rebuild)
+bitbake -c compile -f <recipe>   # Force recompile
+bitbake -c package <recipe>      # Re-run packaging for a recipe
+```
+
+---
+
+## 🔹 Running Tasks
+
+```bash
+bitbake -c fetch <recipe>        # Just fetch source code
+bitbake -c unpack <recipe>       # Unpack source
+bitbake -c configure <recipe>    # Configure
+bitbake -c compile <recipe>      # Compile
+bitbake -c install <recipe>      # Install into Yocto rootfs
+bitbake -c deploy <recipe>       # Deploy built files
+```
+
+---
+
+## 🔹 Debugging & Info
+
+```bash
+bitbake -e <recipe> | less       # Show environment variables
+bitbake -g <image>               # Generate dependency graphs (*.dot files)
+bitbake -s                       # List all available recipes
+bitbake-layers show-layers       # List active layers
+bitbake-layers show-recipes      # List all recipes + their layers
+bitbake-layers show-appends      # Show .bbappend files being applied
+```
+
+---
+
+## 🔹 Managing Layers
+
+```bash
+bitbake-layers add-layer ../meta-myproject
+bitbake-layers remove-layer ../meta-oldlayer
+bitbake-layers create-layer ../meta-newlayer
+```
+
+---
+
+## 🔹 Image Customization
+
+```bash
+echo 'IMAGE_INSTALL:append = " vim python3 my-hello"' >> conf/local.conf
+bitbake core-image-minimal
+```
+
+---
+
+## 🔹 QEMU Testing
+
+```bash
+runqemu qemux86-64               # Run built image in QEMU (x86-64)
+runqemu qemuarm64                # Run ARM64 image in QEMU
+```
+
+---
+
+## 🔹 SDK (Cross-Toolchain)
+
+```bash
+bitbake core-image-minimal -c populate_sdk     # Build SDK
+ls tmp/deploy/sdk/                             # SDK installer appears here
+./poky-glibc-x86_64-core-image-minimal-aarch64-toolchain.sh
+source /opt/poky/3.1/environment-setup-aarch64-poky-linux
+```
+
+---
+
+## 🔹 Pro Tips
+
+```bash
+# Speed up rebuilds
+DL_DIR ?= "${TOPDIR}/../downloads"
+SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"
+
+# Show only failed logs after build
+bitbake <recipe> -c compile -f && bitbake <recipe> || \
+tail -n 50 -f tmp/log/*/log.compile.*
 ```
