@@ -627,3 +627,199 @@ my-hello
 ### You’re done 🎉
 
 You built a QEMU image, created a layer, added your own app, and customized the image.
+
+Here’s your **Advanced Yocto Topics** content in clean Markdown format:
+
+````markdown
+# 🚀 Advanced Yocto Topics
+
+---
+
+## 1️⃣ Custom Kernel Recipes (Add Drivers, Patches)
+
+**What**  
+Kernel recipes tell Yocto which Linux kernel source, configuration, and patches to use.  
+Example: `linux-yocto_5.15.bb`.
+
+**Why**  
+Custom hardware often needs:
+- Custom device drivers (Wi-Fi, camera, GPU).
+- Kernel configs (e.g., `CONFIG_USB_SERIAL`, `CONFIG_CAN`).
+- Security or performance patches.
+
+**How**  
+1. Find kernel recipe (`meta/recipes-kernel/linux`).  
+2. Copy into your own layer (`meta-myproject/recipes-kernel/linux`).  
+3. Modify:
+   - Point `SRC_URI` to your git tree or tarball.
+   - Add patches:
+     ```bitbake
+     SRC_URI += "file://my_patch.patch"
+     ```
+   - Add configs (fragments):
+     ```bitbake
+     SRC_URI += "file://myconfig.cfg"
+     KERNEL_FEATURES:append = " cfg/myconfig.cfg"
+     ```
+
+**Example** – Enable CAN bus:
+```cfg
+CONFIG_CAN=y
+CONFIG_CAN_RAW=y
+````
+
+---
+
+## 2️⃣ Device Tree Overlays
+
+**What**
+Device Tree (DT) describes hardware (pins, buses, peripherals).
+**Overlays** = small patches applied on top of the base DT for flexibility.
+
+**Why**
+
+* Support multiple board variants without rebuilding the whole kernel.
+* Common in Raspberry Pi, Jetson, etc.
+
+**How**
+
+1. Write `.dts` overlay.
+2. Add Yocto recipe → compile into `.dtbo`.
+3. Add to bootloader config (U-Boot/extlinux).
+
+**Example** – Add GPIO LED on Raspberry Pi:
+
+```dts
+/dts-v1/;
+/plugin/;
+/ {
+   fragment@0 {
+      target = <&gpio>;
+      __overlay__ {
+         led_pins: my_led {
+            brcm,pins = <17>;
+            brcm,function = <1>; /* output */
+         };
+      };
+   };
+};
+```
+
+👉 Yocto builds `/boot/overlays/my-led.dtbo`.
+
+---
+
+## 3️⃣ Creating SDKs (For App Developers)
+
+**What**
+Yocto generates cross-toolchains + sysroots → devs build apps without full Yocto.
+
+**Why**
+
+* Faster workflow.
+* Developers don’t touch OS build system.
+
+**How**
+
+1. Generate SDK:
+
+   ```bash
+   bitbake core-image-minimal -c populate_sdk
+   ```
+2. Install:
+
+   ```bash
+   ./tmp/deploy/sdk/poky-glibc-x86_64-core-image-minimal-aarch64-toolchain.sh
+   ```
+3. Source environment:
+
+   ```bash
+   source /opt/poky/3.1/environment-setup-aarch64-poky-linux
+   ```
+4. Compile app:
+
+   ```bash
+   gcc main.c -o main   # → ARM binary
+   ```
+
+**Example**
+Compile `opencv_test.cpp` with SDK → run on Raspberry Pi without local OpenCV.
+
+---
+
+## 4️⃣ Optimizing Builds (sstate Cache & DL\_DIR)
+
+**What**
+Yocto builds are slow.
+`sstate` cache + `DL_DIR` reuse downloads + compiled tasks.
+
+**Why**
+
+* Speeds up rebuilds massively.
+* Share caches across team/CI.
+
+**How** (in `local.conf`):
+
+```bitbake
+DL_DIR ?= "${TOPDIR}/../downloads"
+SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"
+```
+
+**Example**
+
+* First build = 3 hrs.
+* Cached rebuild = \~10 mins.
+
+---
+
+## 5️⃣ BSPs (Board Support Packages)
+
+**What**
+A **BSP layer** = Yocto “plugin” for specific hardware.
+Includes:
+
+* Kernel + configs
+* Bootloader
+* Device Tree
+* Drivers
+* Extra utilities
+
+**Why**
+Without BSP, your custom image can’t boot on real hardware.
+
+**Examples of BSPs**
+
+* Raspberry Pi → `meta-raspberrypi`
+* NVIDIA Jetson → `meta-tegra`
+* BeagleBone → `meta-ti`
+
+**How**
+
+1. Add BSP layer to `bblayers.conf`.
+2. Set `MACHINE` in `local.conf`.
+3. Build image.
+
+**Example** – Jetson Orin Nano:
+
+```bash
+git clone https://github.com/OE4T/meta-tegra.git
+echo 'MACHINE = "jetson-orin-nano-devkit"' >> conf/local.conf
+bitbake demo-image-base
+```
+
+👉 Image includes NVIDIA kernel, CUDA, TensorRT.
+
+---
+
+## ✅ Summary
+
+* **Kernel Recipes** → Add drivers, patches, configs.
+* **Device Tree Overlays** → Flexible hardware description.
+* **SDKs** → Cross-compilation toolchains for devs.
+* **sstate Cache & DL\_DIR** → Speed up builds with caching.
+* **BSPs** → Board-specific support layers (Raspberry Pi, Jetson, BeagleBone).
+
+```
+
+Do you also want me to prepare a **Markdown cheatsheet** with `bitbake` one-liners (like `clean`, `rebuild`, `find recipe`, `add layer`) so you can keep it for quick reference in interviews?
+```
