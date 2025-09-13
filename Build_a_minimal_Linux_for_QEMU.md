@@ -56,7 +56,30 @@ This is the default build configuration for the Poky reference distribution.
 You can now run 'bitbake <target>'
 
 Common targets are:
-    core-image-minimal
+    core-image-minimalbitbake core-image-minimal
+Loading cache: 100% |####################################################################################################################################################| Time: 0:00:00
+Loaded 1878 entries from dependency cache.
+NOTE: Resolving any missing task queue dependencies
+
+Build Configuration:
+BB_VERSION           = "2.8.0"
+BUILD_SYS            = "x86_64-linux"
+NATIVELSBSTRING      = "universal"
+TARGET_SYS           = "x86_64-poky-linux"
+MACHINE              = "qemux86-64"
+DISTRO               = "poky"
+DISTRO_VERSION       = "5.0.12"
+TUNE_FEATURES        = "m64 core2"
+TARGET_FPU           = ""
+meta                 
+meta-poky            
+meta-yocto-bsp       = "scarthgap:6400741e0c11d1620a5ebe394d24deec295236f9"
+
+Sstate summary: Wanted 1733 Local 0 Mirrors 0 Missed 1733 Current 125 (0% match, 6% complete)#############################################################               | ETA:  0:00:00
+Initialising tasks: 100% |###############################################################################################################################################| Time: 0:00:02
+NOTE: Executing Tasks
+NOTE: Tasks Summary: Attempted 4076 tasks of which 341 didn't need to be rerun and all succeeded.
+
     core-image-full-cmdline
     core-image-sato
     core-image-weston
@@ -136,7 +159,30 @@ vm.max_map_count = 1048576
 net.ipv4.conf.default.rp_filter = 2
 net.ipv4.conf.all.rp_filter = 2
 kernel.yama.ptrace_scope = 1
-vm.mmap_min_addr = 65536
+vm.mmap_min_addr = 65536bitbake core-image-minimal
+Loading cache: 100% |####################################################################################################################################################| Time: 0:00:00
+Loaded 1878 entries from dependency cache.
+NOTE: Resolving any missing task queue dependencies
+
+Build Configuration:
+BB_VERSION           = "2.8.0"
+BUILD_SYS            = "x86_64-linux"
+NATIVELSBSTRING      = "universal"
+TARGET_SYS           = "x86_64-poky-linux"
+MACHINE              = "qemux86-64"
+DISTRO               = "poky"
+DISTRO_VERSION       = "5.0.12"
+TUNE_FEATURES        = "m64 core2"
+TARGET_FPU           = ""
+meta                 
+meta-poky            
+meta-yocto-bsp       = "scarthgap:6400741e0c11d1620a5ebe394d24deec295236f9"
+
+Sstate summary: Wanted 1733 Local 0 Mirrors 0 Missed 1733 Current 125 (0% match, 6% complete)#############################################################               | ETA:  0:00:00
+Initialising tasks: 100% |###############################################################################################################################################| Time: 0:00:02
+NOTE: Executing Tasks
+NOTE: Tasks Summary: Attempted 4076 tasks of which 341 didn't need to be rerun and all succeeded.
+
 fs.inotify.max_user_watches = 65536
 kernel.unprivileged_userns_clone = 1
 kernel.pid_max = 4194304
@@ -149,5 +195,27 @@ kernel.apparmor_restrict_unprivileged_userns = 0
 ### Command:- bitbake core-image-minimal
 #### Output
 ```
+Loading cache: 100% |####################################################################################################################################################| Time: 0:00:00
+Loaded 1878 entries from dependency cache.
+NOTE: Resolving any missing task queue dependencies
+
+Build Configuration:
+BB_VERSION           = "2.8.0"
+BUILD_SYS            = "x86_64-linux"
+NATIVELSBSTRING      = "universal"
+TARGET_SYS           = "x86_64-poky-linux"
+MACHINE              = "qemux86-64"
+DISTRO               = "poky"
+DISTRO_VERSION       = "5.0.12"
+TUNE_FEATURES        = "m64 core2"
+TARGET_FPU           = ""
+meta                 
+meta-poky            
+meta-yocto-bsp       = "scarthgap:6400741e0c11d1620a5ebe394d24deec295236f9"
+
+Sstate summary: Wanted 1733 Local 0 Mirrors 0 Missed 1733 Current 125 (0% match, 6% complete)#############################################################               | ETA:  0:00:00
+Initialising tasks: 100% |###############################################################################################################################################| Time: 0:00:02
+NOTE: Executing Tasks
+NOTE: Tasks Summary: Attempted 4076 tasks of which 341 didn't need to be rerun and all succeeded.
 
 ```
