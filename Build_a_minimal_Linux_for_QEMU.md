@@ -1,12 +1,11 @@
 
-### Step_1:-
+### Commands:-
 ```
 sudo apt update
 sudo apt install -y gawk wget git-core diffstat unzip texinfo gcc \
   build-essential chrpath socat cpio python3 python3-pip python3-pexpect \
   xz-utils debianutils iputils-ping python3-git python3-jinja2 xterm \
   device-tree-compiler bmap-tools
-mkdir -p ~/yocto && cd ~/yocto
 ```
 #### command:- git clone https://git.yoctoproject.org/poky
 ```
