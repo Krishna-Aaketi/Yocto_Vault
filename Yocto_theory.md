@@ -50,3 +50,53 @@ Embedded devices (IoT boards, routers, automotive computers, Jetson, Raspberry P
 
 ✅ **In short:**  
 Yocto = **your custom Linux factory** → flexible, reproducible, and optimized for embedded systems.  
+
+# 📘 What is a Framework?
+
+A **framework** is a set of **building blocks + rules** that helps you develop software faster.  
+
+It provides **pre-written code, tools, and structure**, so you don’t need to start everything from scratch.  
+
+### 🔹 Example
+- Web apps → **Django (Python)** or **React (JavaScript)**  
+- Embedded Linux → **Yocto Project**  
+
+👉 Think of it like a **LEGO kit 🧱**:  
+Instead of carving your own bricks, you get ready-made pieces you can arrange however you need.  
+
+---
+
+# 🔓 What is Open Source?
+
+**Open source** means the source code is publicly available.  
+
+You can **see it, modify it, and share it**, usually under licenses like **MIT, GPL, Apache**.  
+
+### ✅ Benefits
+- Free to use (no license fees)  
+- Transparent (you can audit it for security)  
+- Community-driven (many contributors improve it)  
+- Customizable for your own project  
+
+---
+
+# ⚡ Open Source Framework
+
+An **open source framework** = framework whose code is **open and free**.  
+
+It gives you a ready-made **structure + tools**, and you can:  
+- Adapt it  
+- Extend it  
+- Strip it down  
+
+🔹 Backed by a **community** instead of a single vendor.  
+
+---
+
+# 🛠️ Examples of Open Source Frameworks
+- **Django (Python web framework)** → build websites quickly  
+- **TensorFlow (ML framework)** → train and run AI models  
+- **ROS (Robot Operating System)** → robotics middleware framework  
+- **Yocto Project** → build custom Linux distributions  
+- **OpenWrt** → framework to build router firmware  
+
