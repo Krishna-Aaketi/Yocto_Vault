@@ -443,4 +443,187 @@ Then insert SD into Raspberry Pi → boot.
 3. **Run build** → `bitbake <image>` compiles everything.
 4. **Deploy & run** → test in QEMU or flash to real hardware.
 
+
 ---
+
+# 0) Prereqs (Ubuntu 22.04+ on x86\_64)
+
+```bash
+sudo apt update
+sudo apt install -y gawk wget git-core diffstat unzip texinfo gcc \
+  build-essential chrpath socat cpio python3 python3-pip python3-pexpect \
+  xz-utils debianutils iputils-ping python3-git python3-jinja2 xterm \
+  device-tree-compiler bmap-tools
+mkdir -p ~/yocto && cd ~/yocto
+```
+
+---
+
+# 1) Build a minimal Linux for QEMU
+
+## 1.1 Get Poky (Yocto reference)
+
+```bash
+git clone https://git.yoctoproject.org/poky
+cd poky
+git checkout scarthgap       # stable LTS series
+```
+
+## 1.2 Init the build env (creates `build/`)
+
+```bash
+source oe-init-build-env     # drops you into poky/build
+```
+
+## 1.3 Configure basics (`conf/local.conf`)
+
+Set target and speed up rebuilds (optional cache dirs):
+
+```bash
+sed -i 's/^MACHINE.*/MACHINE ?= "qemux86-64"/' conf/local.conf
+cat >> conf/local.conf << 'EOF'
+BB_NUMBER_THREADS = "4"
+PARALLEL_MAKE = "-j4"
+DL_DIR ?= "${TOPDIR}/../downloads"
+SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"
+EOF
+```
+
+## 1.4 Build & run
+
+```bash
+bitbake core-image-minimal
+runqemu qemux86-64
+```
+
+In the VM, log in as `root` (usually no password).
+Exit QEMU with `Ctrl+A` then `X` (on serial) or close the window.
+
+---
+
+# 2) Create your own layer (`meta-myproject`)
+
+## 2.1 Create & add
+
+```bash
+cd ~/yocto/poky/build
+bitbake-layers create-layer ../meta-myproject
+bitbake-layers add-layer ../meta-myproject
+bitbake-layers show-layers   # verify it’s listed
+```
+
+The tool created `../meta-myproject/conf/layer.conf` for you.
+
+---
+
+# 3) Add a tiny custom recipe (Hello app)
+
+We’ll compile a small C program into `/usr/bin/my-hello`.
+
+## 3.1 Files & recipe layout
+
+```bash
+mkdir -p ../meta-myproject/recipes-myproject/my-hello/files
+```
+
+Create **`../meta-myproject/recipes-myproject/my-hello/files/hello.c`**:
+
+```c
+#include <stdio.h>
+int main(){ puts("Hello from Yocto!"); return 0; }
+```
+
+Create **`../meta-myproject/recipes-myproject/my-hello/my-hello_1.0.bb`**:
+
+```bitbake
+SUMMARY = "Very small hello app"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+
+SRC_URI = "file://hello.c"
+S = "${WORKDIR}"
+
+TARGET_CC_ARCH += "${LDFLAGS}"  # ensure correct target flags
+
+do_compile() {
+    ${CC} ${CFLAGS} ${LDFLAGS} hello.c -o my-hello
+}
+
+do_install() {
+    install -d ${D}${bindir}
+    install -m 0755 my-hello ${D}${bindir}/my-hello
+}
+```
+
+## 3.2 Build the package
+
+```bash
+bitbake my-hello
+```
+
+(You’ll find the built package under `tmp/deploy/ipk`/`rpm`/`deb` depending on your PACKAGE\_CLASSES.)
+
+---
+
+# 4) Customize an image (include your app + useful tools)
+
+Two common ways:
+
+## A) Quick way: append to `local.conf`
+
+```bash
+echo 'IMAGE_INSTALL:append = " my-hello bash python3 coreutils"' >> conf/local.conf
+bitbake core-image-minimal
+runqemu qemux86-64
+```
+
+In QEMU:
+
+```bash
+my-hello
+python3 -V
+```
+
+## B) Proper way: make your own image recipe
+
+Create **`../meta-myproject/recipes-myproject/images/my-image.bb`**:
+
+```bitbake
+DESCRIPTION = "My custom lab image"
+LICENSE = "MIT"
+
+inherit core-image
+
+# Add nice features; debug-tweaks = root login w/o password on console
+EXTRA_IMAGE_FEATURES += "debug-tweaks ssh-server-dropbear"
+
+# Add packages you want in rootfs
+IMAGE_INSTALL:append = " my-hello bash python3 vim iproute2"
+
+# (Optional) Smaller image by stripping locales/docs, etc., via DISTRO_FEATURES tweaks.
+```
+
+Build & run your image:
+
+```bash
+bitbake my-image
+runqemu qemux86-64 nographic
+# login: root
+my-hello
+```
+
+---
+
+## Useful checks & tips
+
+* Show active layers: `bitbake-layers show-layers`
+* Find where an image/recipe lives: `bitbake -e my-image | grep ^FILE=`
+* Clean & rebuild one thing: `bitbake -c cleansstate my-hello && bitbake my-hello`
+* Speed: keep `DL_DIR`/`SSTATE_DIR` outside `build/` (already set above)
+* Change MACHINE later (e.g., `qemuarm64`) by editing `local.conf` and rebuilding.
+
+---
+
+### You’re done 🎉
+
+You built a QEMU image, created a layer, added your own app, and customized the image.
